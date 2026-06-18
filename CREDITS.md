@@ -26,19 +26,6 @@ deben hacerse visibles dentro de la propia app (pantalla `/credits` o equivalent
   (no requiere atribución, incluida por cortesía)
 - **Ruta en repo**: `src/frontend/public/hdri/sunny_vondelpark.exr`
 
-## Texturas (cuero de tapas)
-
-### Leather Red 02
-
-- **Autor**: Rob Tuytel
-- **Fuente**: [Poly Haven](https://polyhaven.com/a/leather_red_02)
-- **Licencia**: [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
-  (no requiere atribución, incluida por cortesía)
-- **Uso**: normal map + roughness map (4K EXR) aplicados a las
-  tapas/lomo de los libros 3D para dar grano de cuero. El diffuse
-  rojo se descarta — el color base lo aporta cada saga.
-- **Ruta en repo**: `src/frontend/public/textures/leather/`
-
 ## Texturas (paredes, suelo, zócalos)
 
 > Pendiente de revisar y documentar autores concretos cuando se decidan.

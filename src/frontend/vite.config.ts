@@ -26,7 +26,7 @@ export default defineConfig({
         // Texturas/modelos pesados (libros, HDRI) no se precachean —
         // se cargan a demanda. Si los precacheamos pasan del límite
         // de 2MB de Workbox y rompen el build.
-        globIgnores: ['**/models/books/**', '**/hdri/**', '**/textures/leather/**'],
+        globIgnores: ['**/models/books/**', '**/hdri/**'],
         navigateFallback: '/index.html',
       },
     }),

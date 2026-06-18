@@ -49,19 +49,6 @@ export default function Credits() {
           />
         </section>
 
-        <section className="space-y-4">
-          <h2 className="font-display text-xl">Texturas</h2>
-
-          <CreditEntry
-            title="Leather Red 02"
-            author="Rob Tuytel"
-            sourceUrl="https://polyhaven.com/a/leather_red_02"
-            license="CC0"
-            licenseUrl="https://creativecommons.org/publicdomain/zero/1.0/"
-            note="Normal + roughness aplicados a las tapas de los libros para dar grano de cuero (sin el diffuse rojo: el color lo aporta cada saga)."
-          />
-        </section>
-
         <footer className="text-text-soft border-current/10 border-t pt-4 text-xs">
           ¿Falta algún crédito o ves un error?{' '}
           <a href="mailto:igiron@gnlrussellbedford.es" className="hover:text-text-strong underline">

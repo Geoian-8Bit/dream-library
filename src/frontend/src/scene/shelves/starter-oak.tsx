@@ -11,11 +11,13 @@ import { StarterOakModel } from './starter-oak-model';
  * Cada RowDef define una balda como un rango continuo; los libros se
  * packean desde startX hacia endX por shelfOrder.
  */
+// Orden de arriba a abajo: rowIdx=0 es la balda superior, así el
+// llenado por shelfRow ascendente cae primero en lo alto y va bajando.
 const ROWS: RowDef[] = [
-  { y: 0.265, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
-  { y: 0.64, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
-  { y: 1.015, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
   { y: 1.39, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
+  { y: 1.015, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
+  { y: 0.64, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
+  { y: 0.265, startX: -0.48, endX: 0.48, z: -3.74, maxBookHeight: 0.32 },
 ];
 
 export const starterOak: ShelfCosmetic = {

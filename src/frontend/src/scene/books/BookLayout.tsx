@@ -25,6 +25,12 @@ export interface LibraryBookData {
   sagaTitle?: string;
   /** Nº de libros que el usuario tiene en la saga. Se muestra como badge. */
   bookCount?: number;
+  /**
+   * Timestamp del momento en que el libro fue "añadido". Si presente y
+   * reciente (< duración de la animación), el render lo desliza desde
+   * la posición de presentación al slot.
+   */
+  appearAt?: number;
   /** Reservados — ya no afectan al layout, pero están en la API. */
   format?: string | null;
   pageCount?: number | null;
@@ -35,6 +41,8 @@ interface BookLayoutProps {
   books: LibraryBookData[];
   /** Click sobre cualquier libro → escalado al padre con el id. */
   onBookClick?: (id: string) => void;
+  /** Id del libro actualmente seleccionado, si lo hay. */
+  selectedId?: string | null;
 }
 
 /**
@@ -49,7 +57,7 @@ interface BookLayoutProps {
  * Libros con `shelfRow >= shelf.rows.length` se descartan
  * (overflow por cambio de cosmético con menos baldas).
  */
-export function BookLayout({ shelf, books, onBookClick }: BookLayoutProps) {
+export function BookLayout({ shelf, books, onBookClick, selectedId }: BookLayoutProps) {
   const items = useMemo(() => layout(shelf, books), [shelf, books]);
   return (
     <>
@@ -63,6 +71,8 @@ export function BookLayout({ shelf, books, onBookClick }: BookLayoutProps) {
           scale={it.scale}
           sagaTitle={it.sagaTitle}
           bookCount={it.bookCount}
+          appearAt={it.appearAt}
+          selected={selectedId === it.id}
           onClick={onBookClick}
         />
       ))}
@@ -78,6 +88,7 @@ interface LaidOutBook {
   scale: number;
   sagaTitle?: string;
   bookCount?: number;
+  appearAt?: number;
 }
 
 function modelByName(name: string) {
@@ -151,6 +162,7 @@ function layout(shelf: ShelfCosmetic, books: LibraryBookData[]): LaidOutBook[] {
         scale,
         sagaTitle: b.sagaTitle,
         bookCount: b.bookCount,
+        appearAt: b.appearAt,
       });
       cursor = xRight;
     }

@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, SoftShadows } from '@react-three/drei';
 import { EffectComposer, Bloom, SSAO, Vignette } from '@react-three/postprocessing';
@@ -9,9 +9,9 @@ import { Room } from './Room';
 import { getShelf, DEFAULT_SHELF_ID } from './shelves/registry';
 import type { ShelfCosmetic } from './shelves/types';
 import { BookLayout, type LibraryBookData } from './books/BookLayout';
+import { Book } from './books/Book';
+import { pickModelAvoiding } from './books/variation';
 import { RowGizmos } from './debug/RowGizmos';
-import { useMockBooks } from './books/mock';
-import { SagaModal } from './books/SagaModal';
 
 /**
  * Espacio 3D: cámara fija dentro de la habitación apuntando a la
@@ -47,11 +47,53 @@ export function Library(props: LibraryProps = {}) {
   const baseYaw = useRef(0);
   const basePitch = useRef(0);
 
-  // Saga seleccionada (modal abierto). null = ningún libro abierto.
-  const [openSagaId, setOpenSagaId] = useState<string | null>(null);
+  // Libro seleccionado (aproxima + abre en 3D). null = ninguno.
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+  // Libro centrado en pantalla. Se crea al pulsar "+ Añadir libro" y
+  // se queda flotando en el medio (sin slot). Cada click genera un id
+  // nuevo → re-anima la aparición.
+  const [centeredBook, setCenteredBook] = useState<LibraryBookData | null>(null);
+  // Toggle de apertura del libro centrado (tecla SPACE).
+  // false = libro cerrado en su pose de presentación.
+  // true  = tapas abiertas a 120° (60° cada una).
+  const [centeredBookOpen, setCenteredBookOpen] = useState(false);
   // Para distinguir click vs drag: si pointer down → arrastras → up,
   // tratamos el up como cierre de drag, no click.
   const dragMoved = useRef(false);
+
+  // En modo calibrator usamos sus libros; si no, el shelf va vacío y
+  // sólo se muestra el libro centrado por separado.
+  const books = props.booksOverride ?? [];
+  const showAddButton = !props.booksOverride;
+
+  function spawnCenteredBook() {
+    setCenteredBook({
+      id: `centered-${Date.now()}`,
+      shelfRow: 0,
+      shelfOrder: 0,
+      appearAt: Date.now(),
+    });
+    setCenteredBookOpen(false);
+  }
+
+  // SPACE: toggle de apertura de tapas del libro centrado.
+  // Ignoramos el evento si el foco está en un input/textarea.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.code !== 'Space') return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        return;
+      }
+      e.preventDefault();
+      setCenteredBookOpen((prev) => !prev);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     dragging.current = true;
@@ -113,36 +155,70 @@ export function Library(props: LibraryProps = {}) {
           toneMappingExposure: 1.0,
           outputColorSpace: THREE.SRGBColorSpace,
         }}
+        onPointerMissed={() => {
+          // Click en zona vacía del 3D → cerrar libro abierto.
+          if (!dragMoved.current) setSelectedBookId(null);
+        }}
       >
         <Scene
           shelfOverride={props.shelfOverride}
-          booksOverride={props.booksOverride}
+          books={books}
+          centeredBook={centeredBook}
+          centeredBookOpen={centeredBookOpen}
           showSlotGizmos={props.showSlotGizmos}
+          selectedId={selectedBookId}
           onBookClick={(id) => {
-            // Si el pointer-up de un drag llegó después de un click 3D,
-            // ignoramos el click. r3f dispara onClick siempre tras
-            // pointer-up, así que comprobamos si fue arrastre.
+            // Ignoramos clicks que vienen después de un drag.
             if (dragMoved.current) return;
-            setOpenSagaId(id);
+            // Toggle: clickando el mismo libro otra vez → deselect.
+            setSelectedBookId((prev) => (prev === id ? null : id));
           }}
         />
         <WorldFraming topY={2.5} bottomY={-0.2} distance={3.7} />
         <CameraRig targetYawRef={targetYaw} targetPitchRef={targetPitch} />
         <PostFX />
       </Canvas>
-      <SagaModal sagaId={openSagaId} onClose={() => setOpenSagaId(null)} />
+
+      {showAddButton && (
+        <div className="pointer-events-none absolute right-3 top-3 z-30 flex flex-col items-end gap-2">
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              spawnCenteredBook();
+            }}
+            className="pointer-events-auto rounded-full bg-[#FFB36B] px-4 py-2 text-sm font-semibold text-[#1d1a17] shadow-lg transition hover:bg-[#ffc78c] active:scale-95"
+          >
+            + Añadir libro
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 interface SceneProps {
   shelfOverride?: ShelfCosmetic;
-  booksOverride?: LibraryBookData[];
+  books: LibraryBookData[];
+  /** Libro flotando en medio de la pantalla (independiente del shelf). */
+  centeredBook?: LibraryBookData | null;
+  /** true → tapas abiertas a 120°; false → cerradas. */
+  centeredBookOpen?: boolean;
   showSlotGizmos?: boolean;
   onBookClick?: (id: string) => void;
+  selectedId?: string | null;
 }
 
-function Scene({ shelfOverride, booksOverride, showSlotGizmos, onBookClick }: SceneProps) {
+function Scene({
+  shelfOverride,
+  books,
+  centeredBook,
+  centeredBookOpen,
+  showSlotGizmos,
+  onBookClick,
+  selectedId,
+}: SceneProps) {
   return (
     <>
       <color attach="background" args={[ROOM_PALETTE.background]} />
@@ -185,11 +261,48 @@ function Scene({ shelfOverride, booksOverride, showSlotGizmos, onBookClick }: Sc
       <Room palette={ROOM_PALETTE} />
       <ActiveShelf
         shelfOverride={shelfOverride}
-        booksOverride={booksOverride}
+        books={books}
         showSlotGizmos={showSlotGizmos}
         onBookClick={onBookClick}
+        selectedId={selectedId}
       />
+      {centeredBook ? (
+        <CenteredBook
+          book={centeredBook}
+          shelf={shelfOverride ?? getShelf(DEFAULT_SHELF_ID)}
+          open={centeredBookOpen ?? false}
+        />
+      ) : null}
     </>
+  );
+}
+
+interface CenteredBookProps {
+  book: LibraryBookData;
+  shelf: ShelfCosmetic;
+  open: boolean;
+}
+
+/**
+ * Libro procedural flotando en el centro. La pose centrada (presentación,
+ * yaw=π) la gestiona el propio Book vía `centered`. SPACE abre/cierra
+ * las tapas vía el prop `open`.
+ */
+function CenteredBook({ book, shelf, open }: CenteredBookProps) {
+  const model = pickModelAvoiding(book.id, []);
+  return (
+    <Book
+      id={book.id}
+      modelName={model.name}
+      position={[0, 0, 0]}
+      rotation={[0, 0, 0]}
+      scale={shelf.bookScale}
+      sagaTitle={book.sagaTitle}
+      bookCount={book.bookCount}
+      appearAt={book.appearAt}
+      centered
+      open={open}
+    />
   );
 }
 
@@ -199,17 +312,21 @@ function Scene({ shelfOverride, booksOverride, showSlotGizmos, onBookClick }: Sc
  * calibrador), lo usa en su lugar. `booksOverride={[]}` deja la
  * estantería vacía (calibrador).
  */
-function ActiveShelf({ shelfOverride, booksOverride, showSlotGizmos, onBookClick }: SceneProps) {
+function ActiveShelf({
+  shelfOverride,
+  books,
+  showSlotGizmos,
+  onBookClick,
+  selectedId,
+}: SceneProps) {
   const shelf = shelfOverride ?? getShelf(DEFAULT_SHELF_ID);
-  const fallbackBooks = useMockBooks(shelf.rows.length);
-  const books = booksOverride ?? fallbackBooks;
   const debugFromUrl = new URLSearchParams(window.location.search).get('debugShelf') === '1';
   const debug = showSlotGizmos ?? debugFromUrl;
   const ShelfModel = shelf.Component;
   return (
     <>
       <ShelfModel />
-      <BookLayout shelf={shelf} books={books} onBookClick={onBookClick} />
+      <BookLayout shelf={shelf} books={books} onBookClick={onBookClick} selectedId={selectedId} />
       {debug ? <RowGizmos shelf={shelf} /> : null}
     </>
   );
