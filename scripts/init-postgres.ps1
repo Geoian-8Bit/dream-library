@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 <#
-  Crea los roles `notula` (app) y `notula_admin` (superuser) y la DB `notula`
+  Crea los roles `dream_library` (app) y `dream_library_admin` (superuser) y la DB `dream_library`
   en el Postgres local. Te pedira el password actual del superusuario `postgres`
   para autenticarse; tras ejecutarlo no se queda en disco.
 
@@ -41,4 +41,4 @@ try {
 }
 
 Write-Host ""
-Write-Host "Listo. Ya puedes apuntar Notula a postgres://notula:<pw>@localhost:5432/notula" -ForegroundColor Green
+Write-Host "Listo. Ya puedes apuntar Dream Library a postgres://dream_library:<pw>@localhost:5432/dream_library" -ForegroundColor Green

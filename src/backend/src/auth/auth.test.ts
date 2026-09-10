@@ -16,7 +16,7 @@ afterAll(async () => {
 });
 
 function uniqueEmail() {
-  return `test+${Date.now()}-${Math.random().toString(36).slice(2, 8)}@notula.test`;
+  return `test+${Date.now()}-${Math.random().toString(36).slice(2, 8)}@dream-library.test`;
 }
 
 function extractCookies(setCookieHeader: string | string[] | undefined): string {

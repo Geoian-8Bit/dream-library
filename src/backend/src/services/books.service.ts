@@ -1,4 +1,4 @@
-import type { Book, BookEdition, EditionLookupResponse } from '@notula/shared';
+import type { Book, BookEdition, EditionLookupResponse } from '@dream-library/shared';
 import {
   booksRepository,
   type BookRow,

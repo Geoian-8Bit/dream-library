@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security issue in Notula, please report it privately. Do **not** open a public issue.
+If you discover a security issue in Dream Library, please report it privately. Do **not** open a public issue.
 
 - Email: security@example.invalid (replace before going public)
 - Expected response: within 72 hours.

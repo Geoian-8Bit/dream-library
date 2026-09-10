@@ -1,4 +1,4 @@
-# Arquitectura de Notula
+# Arquitectura de Dream Library
 
 Documento de referencia. Lee `CLAUDE.md` primero para tener el contexto y las reglas; este archivo entra en el detalle.
 
@@ -25,7 +25,7 @@ Documento de referencia. Lee `CLAUDE.md` primero para tener el contexto y las re
 ## Monorepo
 
 ```
-notula/
+dream-library/
 ├── CLAUDE.md                          guía corta para agentes (auto-loaded por Claude Code)
 ├── README.md                          presentación + quickstart
 ├── docs/                              docs detallados (este archivo, CONVENTIONS, SETUP)
@@ -39,11 +39,11 @@ notula/
 ├── scripts/
 │   ├── init-postgres.ps1              wrapper que pide password y corre psql
 │   └── init-postgres.sql              passwords baked-in, gitignored
-├── shared/                            workspace @notula/shared
+├── shared/                            workspace @dream-library/shared
 │   └── src/
 │       ├── index.ts                   re-export de schemas/
 │       └── schemas/index.ts           zod compartido: user, book, edition, errors, responses
-├── src/backend/                       workspace @notula/backend
+├── src/backend/                       workspace @dream-library/backend
 │   ├── drizzle.config.ts              config drizzle-kit (migraciones)
 │   ├── drizzle/migrations/            SQL versionado + meta journal
 │   ├── tsconfig.json tsconfig.build.json vitest.config.ts
@@ -69,7 +69,7 @@ notula/
 │       │   └── health.ts health.test.ts
 │       ├── lib/errors.ts              AppError + factorías NotFound, BadRequest, Conflict, etc.
 │       └── test/setup.ts              vitest globalSetup: carga .env, corre migraciones
-└── src/frontend/                      workspace @notula/frontend
+└── src/frontend/                      workspace @dream-library/frontend
     ├── index.html vite.config.ts vitest.config.ts tailwind.config.ts postcss.config.js nginx.conf
     └── src/
         ├── main.tsx                   bootstrap: QueryClientProvider + BrowserRouter
@@ -87,7 +87,7 @@ notula/
 ## Ciclo de vida de una request protegida
 
 ```
-GET /api/v1/books/by-isbn/:isbn  +  Cookie: notula.session_token=...
+GET /api/v1/books/by-isbn/:isbn  +  Cookie: dream-library.session_token=...
             │
             ▼
 ┌──────────────────────────────────┐
@@ -167,7 +167,7 @@ Las migraciones SQL son las mismas para ambos. La capa de queries (Drizzle) es i
 
 Auth: `users`, `sessions`, `accounts`, `verifications`. (Las de Better Auth.)
 
-Dominio Notula:
+Dominio Dream Library:
 
 - `book_series` — sagas (Mistborn, Stormlight, etc.)
 - `books` — obras (un título conceptual; varias ediciones lo materializan)
@@ -203,7 +203,7 @@ Los errores de validación de zod (request body / params malformados) los emite 
 
 ## Schemas y wire shape
 
-`@notula/shared/src/schemas/index.ts` exporta zod schemas que sirven como **única fuente de verdad** para el contrato de la API:
+`@dream-library/shared/src/schemas/index.ts` exporta zod schemas que sirven como **única fuente de verdad** para el contrato de la API:
 
 ```
 zod schema  ──► validador de request (params/body) en backend (Fastify type provider)

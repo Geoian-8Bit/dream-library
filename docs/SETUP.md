@@ -1,6 +1,6 @@
 # Setup local
 
-Cómo poner Notula a correr en tu máquina. Probado en Windows 11; lo equivalente en macOS/Linux es directo (sólo cambian los comandos de servicio Postgres).
+Cómo poner Dream Library a correr en tu máquina. Probado en Windows 11; lo equivalente en macOS/Linux es directo (sólo cambian los comandos de servicio Postgres).
 
 ## Prerequisitos
 
@@ -28,11 +28,11 @@ powershell -ExecutionPolicy Bypass -File scripts/init-postgres.ps1
 
 Te pedirá tu password. El script crea (idempotente):
 
-- Rol **`notula`** — el user de la app, password generado, sin permisos de superuser.
-- Rol **`notula_admin`** — superuser, password generado. Para administrar desde pgAdmin / DBeaver.
-- DB **`notula`** propiedad de `notula`.
+- Rol **`dream_library`** — el user de la app, password generado, sin permisos de superuser.
+- Rol **`dream_library_admin`** — superuser, password generado. Para administrar desde pgAdmin / DBeaver.
+- DB **`dream_library`** propiedad de `dream_library`.
 
-El script imprime los passwords en consola. **Guárdalos en tu password manager.** Los del rol `notula` van también a `.env`.
+El script imprime los passwords en consola. **Guárdalos en tu password manager.** Los del rol `dream_library` van también a `.env`.
 
 > El SQL ejecutado vive en `scripts/init-postgres.sql` con los passwords baked-in. Está en `.gitignore` para que no salga del repo. Si necesitas regenerar passwords, edita ese archivo y vuelve a correr el `.ps1`.
 
@@ -45,7 +45,7 @@ cp .env.example .env
 Edita `.env` y ajusta:
 
 ```
-DATABASE_URL=postgres://notula:<el-password-generado>@localhost:5432/notula
+DATABASE_URL=postgres://dream_library:<el-password-generado>@localhost:5432/dream_library
 BETTER_AUTH_SECRET=<32-caracteres-random>
 BETTER_AUTH_URL=http://localhost:4000
 ```
@@ -101,13 +101,13 @@ npm run dev
 ```bash
 docker compose up -d postgres
 cp .env.example .env
-# editar .env: DATABASE_URL=postgres://notula:notula@localhost:5432/notula
+# editar .env: DATABASE_URL=postgres://dream_library:dream_library@localhost:5432/dream_library
 #               BETTER_AUTH_SECRET=<32 chars>
 npm install
 npm run dev
 ```
 
-El servicio docker `postgres` viene con user `notula` / password `notula` / db `notula` por defecto (ver `docker-compose.yml`). Ojo: ese password es trivial; sólo úsalo en local detrás del firewall.
+El servicio docker `postgres` viene con user `dream_library` / password `dream_library` / db `dream_library` por defecto (ver `docker-compose.yml`). Ojo: ese password es trivial; sólo úsalo en local detrás del firewall.
 
 ## Verificar que va
 
@@ -130,9 +130,9 @@ Frontend: http://localhost:5173.
 Borrar las tablas y dejar la DB lista para que las migraciones del backend la repueblen:
 
 ```powershell
-$env:PGPASSWORD = '<password de notula>'
-& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -U notula -h localhost -d notula `
-  -c "DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public AUTHORIZATION notula;"
+$env:PGPASSWORD = '<password de dream_library>'
+& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -U dream_library -h localhost -d dream_library `
+  -c "DROP SCHEMA IF EXISTS public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; CREATE SCHEMA public AUTHORIZATION dream_library;"
 ```
 
 Reinicia el backend (`npm run dev`) — las migraciones corren automáticamente.
@@ -156,7 +156,7 @@ Reinicia `npm run dev` para que coja el cambio (el `.env` se lee al boot, no en 
 
 ## Correr tests en local
 
-Backend tests requieren Postgres alcanzable. Por defecto usan `DATABASE_URL_TEST` si está definido en `.env`; si no, caen en `DATABASE_URL`. El `init-postgres.ps1` ya crea la DB `notula_test` para el rol `notula`, así que basta con:
+Backend tests requieren Postgres alcanzable. Por defecto usan `DATABASE_URL_TEST` si está definido en `.env`; si no, caen en `DATABASE_URL`. El `init-postgres.ps1` ya crea la DB `dream_library_test` para el rol `dream_library`, así que basta con:
 
 ```bash
 npm test
@@ -167,11 +167,11 @@ Frontend tests no necesitan DB.
 Si sólo quieres uno:
 
 ```bash
-npm test --workspace=@notula/backend
-npm test --workspace=@notula/frontend
+npm test --workspace=@dream-library/backend
+npm test --workspace=@dream-library/frontend
 ```
 
-> Los tests crean users de prueba (`test+<timestamp>@notula.test`) que se acumulan. Como van a `notula_test` y no a `notula`, no contaminan el dev DB. Si en algún momento quieres limpiar el test DB, igual que el dev: `DROP SCHEMA public CASCADE; ...` apuntando a `notula_test`.
+> Los tests crean users de prueba (`test+<timestamp>@dream-library.test`) que se acumulan. Como van a `dream_library_test` y no a `dream_library`, no contaminan el dev DB. Si en algún momento quieres limpiar el test DB, igual que el dev: `DROP SCHEMA public CASCADE; ...` apuntando a `dream_library_test`.
 
 > En CI no hay DB de tests separada — el servicio Postgres es efímero (se descarta al terminar el job), así que reutiliza la misma DB. Por eso el workflow no setea `DATABASE_URL_TEST`.
 
@@ -190,7 +190,7 @@ O con npx: `npx kill-port 4000 5173`.
 
 ## Problemas frecuentes
 
-### `password authentication failed for user "notula"`
+### `password authentication failed for user "dream_library"`
 
 `.env` tiene un `DATABASE_URL` con password incorrecto. Comprueba que coincide con el que generó `init-postgres.ps1`. Si lo perdiste, edita `scripts/init-postgres.sql`, pon nuevos passwords, reejecuta el `.ps1`, y actualiza `.env`.
 
@@ -220,9 +220,9 @@ Comprueba que el backend devuelve la cookie con `Secure=false` en dev. Mira la p
 
 ## Herramientas recomendadas
 
-- **pgAdmin** o **DBeaver** para inspeccionar la DB en local (con el rol `notula_admin`).
+- **pgAdmin** o **DBeaver** para inspeccionar la DB en local (con el rol `dream_library_admin`).
 - **VS Code** con extensiones: ESLint, Prettier, Tailwind CSS IntelliSense.
-- **Drizzle Studio**: `npm run db:studio --workspace=@notula/backend` abre una UI web para los datos.
+- **Drizzle Studio**: `npm run db:studio --workspace=@dream-library/backend` abre una UI web para los datos.
 - **Postman / Bruno / HTTPie** para probar endpoints. Recuerda enviar la cookie de sesión (curl: `-b "<copiada del navegador>"`).
 
 ## Lecturas siguientes

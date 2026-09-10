@@ -1,5 +1,5 @@
 /**
- * Lenguajes de material 2D para Notula.
+ * Lenguajes de material 2D para Dream Library.
  *
  * Activos en el selector (en este orden):
  *   - clay     → claymorphism cálido y chunky.

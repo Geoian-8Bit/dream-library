@@ -12,7 +12,7 @@ ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm --workspace @notula/frontend run build
+RUN npm --workspace @dream-library/frontend run build
 
 FROM nginx:1.27-alpine AS runtime
 COPY --from=build /app/src/frontend/dist /usr/share/nginx/html

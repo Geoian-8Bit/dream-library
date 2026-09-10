@@ -14,7 +14,7 @@ export const useThemeStore = create<ThemeStore>()(
       setStyle: (id) => set({ styleId: id }),
     }),
     {
-      name: 'notula:style',
+      name: 'dream-library:style',
       // Si llega un valor antiguo o corrupto, caer al default.
       onRehydrateStorage: () => (state) => {
         if (state && !isStyleId(state.styleId)) state.styleId = 'clay';

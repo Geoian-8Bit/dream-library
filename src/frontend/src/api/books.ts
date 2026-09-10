@@ -3,7 +3,7 @@ import {
   editionLookupResponseSchema,
   type ListBooksResponse,
   type EditionLookupResponse,
-} from '@notula/shared';
+} from '@dream-library/shared';
 import { api } from '../lib/api';
 
 export async function listBooks(): Promise<ListBooksResponse> {
