@@ -40,7 +40,7 @@ export default function SignUp() {
         className="nt-card relative w-full max-w-sm space-y-5 p-8 backdrop-blur"
       >
         <div className="space-y-1 text-center">
-          <h1 className="font-display text-text-strong text-4xl tracking-wide">Notula</h1>
+          <h1 className="font-display text-text-strong text-4xl tracking-wide">Dream Library</h1>
           <p className="text-text-soft text-sm">Crea tu biblioteca</p>
         </div>
 

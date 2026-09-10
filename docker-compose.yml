@@ -1,18 +1,18 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: notula-postgres
+    container_name: dream-library-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: notula
-      POSTGRES_PASSWORD: notula
-      POSTGRES_DB: notula
+      POSTGRES_USER: dream_library
+      POSTGRES_PASSWORD: dream_library
+      POSTGRES_DB: dream_library
     ports:
       - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U notula -d notula']
+      test: ['CMD-SHELL', 'pg_isready -U dream_library -d dream_library']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,14 +21,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    container_name: notula-backend
+    container_name: dream-library-backend
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://notula:notula@postgres:5432/notula
+      DATABASE_URL: postgres://dream_library:dream_library@postgres:5432/dream_library
       BACKEND_HOST: 0.0.0.0
       BACKEND_PORT: 4000
       CORS_ORIGINS: http://localhost
@@ -41,7 +41,7 @@ services:
       dockerfile: Dockerfile.frontend
       args:
         VITE_API_URL: /api
-    container_name: notula-frontend
+    container_name: dream-library-frontend
     restart: unless-stopped
     depends_on:
       - backend

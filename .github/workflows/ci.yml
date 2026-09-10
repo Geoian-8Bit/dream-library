@@ -13,18 +13,18 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_USER: notula
-          POSTGRES_PASSWORD: notula
-          POSTGRES_DB: notula
+          POSTGRES_USER: dream_library
+          POSTGRES_PASSWORD: dream_library
+          POSTGRES_DB: dream_library
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U notula -d notula"
+          --health-cmd "pg_isready -U dream_library -d dream_library"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
     env:
-      DATABASE_URL: postgres://notula:notula@localhost:5432/notula
+      DATABASE_URL: postgres://dream_library:dream_library@localhost:5432/dream_library
       BETTER_AUTH_SECRET: ci-test-secret-must-be-at-least-32-characters
       NODE_ENV: test
     steps:
@@ -65,7 +65,7 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: false
-          tags: notula-backend:ci
+          tags: dream-library-backend:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -75,6 +75,6 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: false
-          tags: notula-frontend:ci
+          tags: dream-library-frontend:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max

@@ -15,7 +15,7 @@ if (process.env.DATABASE_URL_TEST) {
   process.env.DATABASE_URL = process.env.DATABASE_URL_TEST;
 }
 if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = 'postgres://notula:notula@localhost:5432/notula';
+  process.env.DATABASE_URL = 'postgres://dream_library:dream_library@localhost:5432/dream_library';
 }
 
 export async function setup() {

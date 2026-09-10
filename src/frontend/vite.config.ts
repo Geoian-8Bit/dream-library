@@ -9,8 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Notula',
-        short_name: 'Notula',
+        name: 'Dream Library',
+        short_name: 'Dream Library',
         description: 'Biblioteca virtual personal inmersiva',
         theme_color: '#0f0f10',
         background_color: '#0f0f10',

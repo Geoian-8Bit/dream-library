@@ -90,6 +90,6 @@ const entrypoint = process.argv[1]
   ? fileURLToPath(`file://${process.argv[1].replace(/\\/g, '/')}`)
   : '';
 const isMain = entrypoint === fileURLToPath(import.meta.url);
-if (isMain || process.env.NOTULA_FORCE_START === '1') {
+if (isMain || process.env.DREAM_LIBRARY_FORCE_START === '1') {
   main();
 }

@@ -36,7 +36,7 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
-    cookiePrefix: 'notula',
+    cookiePrefix: 'dream-library',
     useSecureCookies: env.NODE_ENV === 'production',
     defaultCookieAttributes: {
       sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',

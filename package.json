@@ -1,5 +1,5 @@
 {
-  "name": "notula",
+  "name": "dream-library",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,15 +10,15 @@
   ],
   "scripts": {
     "dev": "npm-run-all --parallel dev:backend dev:frontend",
-    "dev:backend": "npm --workspace @notula/backend run dev",
-    "dev:frontend": "npm --workspace @notula/frontend run dev",
+    "dev:backend": "npm --workspace @dream-library/backend run dev",
+    "dev:frontend": "npm --workspace @dream-library/frontend run dev",
     "build": "npm run build --workspaces --if-present",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "db:generate": "npm --workspace @notula/backend run db:generate",
-    "db:push": "npm --workspace @notula/backend run db:push",
-    "db:studio": "npm --workspace @notula/backend run db:studio",
+    "db:generate": "npm --workspace @dream-library/backend run db:generate",
+    "db:push": "npm --workspace @dream-library/backend run db:push",
+    "db:studio": "npm --workspace @dream-library/backend run db:studio",
     "test": "npm test --workspaces --if-present",
     "prepare": "husky"
   },

@@ -5,7 +5,7 @@ import {
   listBooksResponseSchema,
   editionLookupResponseSchema,
   errorResponseSchema,
-} from '@notula/shared';
+} from '@dream-library/shared';
 import { booksService } from '../services/books.service.js';
 
 const isbnParams = z.object({ isbn: isbnSchema });

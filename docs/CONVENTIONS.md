@@ -1,4 +1,4 @@
-# Convenciones de Notula
+# Convenciones de Dream Library
 
 Cómo añadir cosas. Si añades una feature nueva, sigue **al pie de la letra** las recetas de este archivo. Si te encuentras escribiendo código que no encaja con ninguna receta, para y discútelo en chat antes de seguir.
 
@@ -6,7 +6,7 @@ Cómo añadir cosas. Si añades una feature nueva, sigue **al pie de la letra** 
 
 Vas a tocar 4 ó 5 archivos en este orden:
 
-1. **schema** (si la feature toca DB nueva): `shared/src/schemas/index.ts` y `src/backend/src/db/schema.ts`. Genera migración con `npm run db:generate --workspace=@notula/backend`.
+1. **schema** (si la feature toca DB nueva): `shared/src/schemas/index.ts` y `src/backend/src/db/schema.ts`. Genera migración con `npm run db:generate --workspace=@dream-library/backend`.
 2. **repository**: `src/backend/src/repositories/<feature>.repository.ts` — sólo queries.
 3. **service**: `src/backend/src/services/<feature>.service.ts` — orquesta y mapea a wire.
 4. **route**: `src/backend/src/routes/<feature>.ts` — thin handler con schemas zod.
@@ -47,7 +47,7 @@ Reglas:
 Si necesitas tabla nueva, añádela y regenera la migración:
 
 ```bash
-npm run db:generate --workspace=@notula/backend
+npm run db:generate --workspace=@dream-library/backend
 ```
 
 Drizzle-kit puede pedir prompts interactivos si interpreta cambios como rename. Si estás fuera de TTY, edita `schema.ts` para que no haya ambigüedad (renombra primero, añade después en commits separados) o aplica las ALTERs a mano y copia el snapshot.
@@ -94,7 +94,7 @@ Reglas:
 
 ```ts
 // src/backend/src/services/series.service.ts
-import type { Series } from '@notula/shared';
+import type { Series } from '@dream-library/shared';
 import { seriesRepository, type SeriesRow } from '../repositories/series.repository.js';
 import { NotFound } from '../lib/errors.js';
 
@@ -135,7 +135,7 @@ Reglas:
 // src/backend/src/routes/series.ts
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { listSeriesResponseSchema, seriesSchema, errorResponseSchema } from '@notula/shared';
+import { listSeriesResponseSchema, seriesSchema, errorResponseSchema } from '@dream-library/shared';
 import { seriesService } from '../services/series.service.js';
 
 const idParam = z.object({ id: z.string().uuid() });
@@ -263,7 +263,7 @@ let app: FastifyInstance;
 let cookies: string;
 
 function uniqueEmail() {
-  return `test+${Date.now()}-${Math.random().toString(36).slice(2, 8)}@notula.test`;
+  return `test+${Date.now()}-${Math.random().toString(36).slice(2, 8)}@dream-library.test`;
 }
 
 function extractCookies(setCookieHeader: string | string[] | undefined): string {
@@ -334,7 +334,7 @@ import {
   seriesSchema,
   type ListSeriesResponse,
   type Series,
-} from '@notula/shared';
+} from '@dream-library/shared';
 import { api } from '../lib/api';
 
 export async function listSeries(): Promise<ListSeriesResponse> {
@@ -388,7 +388,7 @@ Reglas:
 - ❌ Llamar `db.select()` desde una route. Va al repository.
 - ❌ Devolver `Date` o `null/undefined` desde el service para "indicar" un 404. Throw `NotFound`.
 - ❌ Catch + ignorar errores en services (`catch { return null }`). Deja propagar; el errorHandler decide.
-- ❌ Schemas zod duplicados en backend y frontend. Vive en `@notula/shared`.
+- ❌ Schemas zod duplicados en backend y frontend. Vive en `@dream-library/shared`.
 - ❌ `userId` derivado de un body no validado. Viene SIEMPRE de `req.user.id` (que pone `requireUser`).
 - ❌ Endpoints sin `response.<status>: schema`. La validación de respuesta cazó al menos un bug grave en este proyecto (errorHandler no firaba); úsala.
 - ❌ Hardcodear `http://localhost:4000` en el frontend. Va por `import.meta.env.VITE_API_URL` (en el wrapper `api()`).
